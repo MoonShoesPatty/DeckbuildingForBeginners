@@ -1,0 +1,19 @@
+/* ----- LIST OF CARDS STYLES -----*/
+
+.collectionList {
+    width: 100%;
+    background-color: rgba(0,0,0,0.85);
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+.collectionListItem {
+    width: 25%;
+}
+.collectionCardImg {
+    width: 100%;
+}

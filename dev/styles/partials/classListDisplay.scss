@@ -1,0 +1,26 @@
+/* ----- CLASS SELECT LIST -----*/
+
+.classList {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+}
+.classListItem {
+    color: white;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border: 1px solid white;
+    border-bottom: none;
+    margin-right: 3px;
+    background-color: rgba(0,0,0,0.85);
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+.classListItem:hover, .classListItem:focus {
+    background-color: rgba(255,255,255,0.85);
+    color: black;
+}
+.selectedClass {
+
+}

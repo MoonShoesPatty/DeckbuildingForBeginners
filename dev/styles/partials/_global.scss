@@ -1,0 +1,19 @@
+/* ----- GLOBAL STYLES -----*/
+
+body {
+    font-size: 62.5%;
+}
+#app {
+    background-image: url('assets/jainaBackground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    width: 100%;
+    height: 100vh;
+}
+.appWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height:100vh;
+}
