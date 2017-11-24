@@ -104,7 +104,7 @@ class GetDemCards extends React.Component {
 			classCards[hero].sort(function (a, b) {
 				return a.cost - b.cost;
 			});
-		}	
+		}
 		// Send the sorted array back to App
 		this.displayCards(classCards);
 	}
@@ -186,23 +186,47 @@ class Decklist extends React.Component {
 			userDeck: []
 		}
 		this.addCard = this.addCard.bind(this);
+		this.sortDeckByCost = this.sortDeckByCost.bind(this);
+		this.deleteCard = this.deleteCard.bind(this);
 	}
+	// Put card selected by user in decklist
 	addCard(card) {
 		// Thanks Fatin!
 		//const cardCopy = {...card};
 		const deckArray = [...this.state.userDeck, card]
+		this.sortDeckByCost(deckArray);
+	}
+	// Runs when a user selects a card for the second time - puts second copy in decklist
+	duplicateCard(card) {
+
+	}
+	// Sort the user's deck by cost and secondarily by card name
+	sortDeckByCost(deckArray) {
+		deckArray.sort(function (a, b) {
+			return a.cost - b.cost;
+		});
+		console.log(deckArray)
 		this.setState({
 			userDeck: deckArray
 		})
 	}
-	duplicateCard(card) {
-
-	}
-	sortDeckByCost() {
-
+	// Remove selected card from decklist
+	deleteCard(cardRemoveId) {
+		const deckArray = this.state.userDeck;
+		deckArray.forEach((cardInDeck, index) => {
+			console.log(cardInDeck.cardId, cardRemoveId)
+			if (cardInDeck.cardId === cardRemoveId) {
+				console.log(index)
+				deckArray.splice(index, 1)
+				console.log(deckArray)
+			}
+		})
+		this.setState({
+			userDeck: deckArray
+		})
 	}
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.selectedCard.name) {
+		if (nextProps.selectedCard.name && this.state.userDeck.length < 30) {
 			this.addCard(nextProps.selectedCard);
 		}
 	}
@@ -219,6 +243,9 @@ class Decklist extends React.Component {
 								<p className="userDeckCardName">
 									{`${card.name}`}
 								</p>
+								<div className="userDeckCardRemove" onClick={() => this.deleteCard(card.cardId)}>
+									{'-'}
+								</div>
 							</li>
 						)
 					})}

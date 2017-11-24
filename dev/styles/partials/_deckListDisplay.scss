@@ -8,20 +8,35 @@
     border-left: 1px solid white;
     height: 100vh;
     width: 100%;
+    font-size: 0.9rem;
 }
 .userDeckItem {
     border-bottom: 1px solid white;
     color: white;
     display: flex;
     overflow: hidden;
+    display: flex;
+    justify-content: space-between;
 }
-.userDeckCardCost {
-    background-color: rgba(0, 174, 255, 0.5);
-    border-right: 1px solid white;
+.userDeckCardCost, .userDeckCardRemove {
     height: 100%;
     padding: 5px;
     text-align: center;
     width: 20px;
+}
+.userDeckCardCost {
+    background-color: rgba(0, 174, 255, 0.5);
+    border-right: 1px solid white;
+}
+.userDeckCardRemove {
+    background-color: rgba(204, 0, 0, 0.5);
+    border-left: 1px solid white;
+    transition: all 0.2s ease-out;
+}
+.userDeckCardRemove:hover, .userDeckCardRemove:focus {
+    width: 40px;
+    background-color: rgba(204, 0, 0, 0.9);
+    cursor: pointer;
 }
 .userDeckCardName {
     padding: 5px 5px;
