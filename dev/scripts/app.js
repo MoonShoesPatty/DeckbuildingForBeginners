@@ -48,6 +48,8 @@ class GetDemCards extends React.Component {
 		this.sortByClass = this.sortByClass.bind(this);
 		this.sortByCost = this.sortByCost.bind(this);
 		this.displayCards = this.displayCards.bind(this);
+		this.prevPage = this.prevPage.bind(this);
+		this.nextPage = this.nextPage.bind(this);
 	}
 	componentDidMount() {
 		// Poll the API and asks for a full list of collectible cards (Use the HackerYou proxy to cache the data)
@@ -76,7 +78,8 @@ class GetDemCards extends React.Component {
 		})
 	}
 	componentWillReceiveProps(nextProps) {
-		this.displayCards(classCards, nextProps.currentClass);
+		console.log(nextProps)
+		this.displayCards(classCards, nextProps.currentClass, nextProps.currentPage);
 	}
 	// take the cards retrieved from the API and sort them by class
 	sortByClass(allCards) {
@@ -105,9 +108,10 @@ class GetDemCards extends React.Component {
 		// Send the sorted array back to App
 		this.displayCards(classCards);
 	}
-	displayCards(allCards, classTo = 'Druid') {
+	displayCards(allCards, classTo = 'Druid', currentPage = 0) {
 		const currentDisplay = [];
-		for (let i = this.props.currentPage * 8; i < (this.props.currentPage * 8) + 8; i++) {
+		const lastCardIndex = classCards[this.props.currentClass].length;
+		for (let i = currentPage * 8; i < (currentPage * 8) + 8 && i < lastCardIndex; i++) {
 			currentDisplay.push(allCards[classTo][i]);
 		}
 		this.setState({
@@ -117,17 +121,37 @@ class GetDemCards extends React.Component {
 	handleClick(selectedCard) {
 		this.props.updateDecklist(selectedCard);
 	}
+	prevPage() {
+		if(this.props.currentPage > 0) {
+			const newPage = this.props.currentPage - 1;
+			console.log(newPage, "prev")
+			this.props.updatePage(newPage);
+			this.props.resetCard();
+		}
+	}
+	nextPage() {
+		const lastPageIndex = Math.ceil(classCards[this.props.currentClass].length / 8) - 1
+		if (this.props.currentPage < lastPageIndex) {
+			const newPage = this.props.currentPage + 1;
+			this.props.updatePage(newPage);
+			this.props.resetCard();
+		}
+	}
 	render() {
 		return (
-			<ul className="collectionList">
+			<div className="collectionListWrapper">
+				<div className="prevPageArrow" onClick={this.prevPage}></div>
+				<ul className="collectionList">
 				{this.state.displayCards.map((card) => {
 					return (
-					<li onClick={() => this.handleClick(card)} key={card.cardId} className="collectionListItem">
-						<img src={card.img} alt={card.name} className="collectionCardImg" />
-					</li>
+						<li onClick={() => this.handleClick(card)} key={card.cardId} className="collectionListItem">
+							<img src={card.img} alt={card.name} className="collectionCardImg" />
+						</li>
 					)
 				})}
-			</ul>
+				</ul>
+				<div className="nextPageArrow" onClick={this.nextPage}></div>
+			</div>
 		)
 	}
 }
@@ -192,7 +216,9 @@ class Decklist extends React.Component {
 								<div className="userDeckCardCost">
 									{`${card.cost}`}	
 								</div>
-								{`${card.name}`}
+								<p className="userDeckCardName">
+									{`${card.name}`}
+								</p>
 							</li>
 						)
 					})}
@@ -211,13 +237,15 @@ class App extends React.Component {
 			currentCard: {}
 		}
 		this.updateClass = this.updateClass.bind(this);
+		this.updatePage = this.updatePage.bind(this);
 		this.updateDecklist = this.updateDecklist.bind(this);
 		this.resetCurrentCard = this.resetCurrentCard.bind(this);
 	}
 	// Set a new class to display the cards of
 	updateClass(newClass) {
 		this.setState({
-			currentClass: newClass
+			currentClass: newClass,
+			currentPage: 0
 		})
 	}
 	// Add a new card to the decklist
@@ -227,9 +255,16 @@ class App extends React.Component {
 			currentCard: newCard
 		})
 	}
+	// After a card is added to the decklist, reset the state to blank
 	resetCurrentCard() {
 		this.setState({
 			currentCard: {}
+		})
+	}
+	// Change the page based on which arrow was clicked
+	updatePage(newPage) {
+		this.setState({
+			currentPage: newPage
 		})
 	}
 	render() {
@@ -237,7 +272,7 @@ class App extends React.Component {
 			<div className="appWrapper">
 				<div className="cardsSection">
 					<PlayerClassSelect currentClass={this.state.currentClass} updateClass={this.updateClass} resetCard={this.resetCurrentCard} />
-					<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} updateDecklist={this.updateDecklist} />
+					<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} updateDecklist={this.updateDecklist} updatePage={this.updatePage} resetCard={this.resetCurrentCard}/>
 				</div>
 				<div className="deckSection">
 					<Decklist selectedCard={this.state.currentCard} />

@@ -10,7 +10,21 @@
     width: 100%;
 }
 .userDeckItem {
-    padding: 5px 10px;
     border-bottom: 1px solid white;
     color: white;
+    display: flex;
+    overflow: hidden;
+}
+.userDeckCardCost {
+    background-color: rgba(0, 174, 255, 0.5);
+    border-right: 1px solid white;
+    height: 100%;
+    padding: 5px;
+    text-align: center;
+    width: 20px;
+}
+.userDeckCardName {
+    padding: 5px 5px;
+    margin: 0;
+    white-space: nowrap;
 }
