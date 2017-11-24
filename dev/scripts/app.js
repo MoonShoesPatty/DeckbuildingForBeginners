@@ -76,7 +76,6 @@ class GetDemCards extends React.Component {
 		})
 	}
 	componentWillReceiveProps(nextProps) {
-		console.log(nextProps)
 		this.displayCards(classCards, nextProps.currentClass);
 	}
 	// take the cards retrieved from the API and sort them by class
@@ -115,12 +114,15 @@ class GetDemCards extends React.Component {
 			displayCards: currentDisplay
 		})
 	}
+	handleClick(selectedCard) {
+		this.props.updateDecklist(selectedCard);
+	}
 	render() {
 		return (
 			<ul className="collectionList">
 				{this.state.displayCards.map((card) => {
 					return (
-					<li key={card.cardId} className="collectionListItem">
+					<li onClick={() => this.handleClick(card)} key={card.cardId} className="collectionListItem">
 						<img src={card.img} alt={card.name} className="collectionCardImg" />
 					</li>
 					)
@@ -140,6 +142,7 @@ class PlayerClassSelect extends React.Component {
 	}
 	handleClick(newClass) {
 		this.props.updateClass(newClass.hero);
+		this.props.resetCard();
 	}
 	render() {
 		return (
@@ -158,6 +161,26 @@ class Decklist extends React.Component {
 		this.state = {
 			userDeck: []
 		}
+		this.addCard = this.addCard.bind(this);
+	}
+	addCard(card) {
+		// Thanks Fatin!
+		//const cardCopy = {...card};
+		const deckArray = [...this.state.userDeck, card]
+		this.setState({
+			userDeck: deckArray
+		})
+	}
+	duplicateCard(card) {
+
+	}
+	sortDeckByCost() {
+
+	}
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.selectedCard.name) {
+			this.addCard(nextProps.selectedCard);
+		}
 	}
 	render() {
 		return (
@@ -165,7 +188,12 @@ class Decklist extends React.Component {
 				<ul className="userDeckList">
 					{this.state.userDeck.map((card) => {
 						return (
-							<li className="userDeckItem"></li>
+							<li className="userDeckItem" key={card.cardId}>
+								<div className="userDeckCardCost">
+									{`${card.cost}`}	
+								</div>
+								{`${card.name}`}
+							</li>
 						)
 					})}
 				</ul>
@@ -179,21 +207,41 @@ class App extends React.Component {
 		super();
 		this.state = {
 			currentPage: 0,
-			currentClass: 'Warlock'
+			currentClass: 'Druid',
+			currentCard: {}
 		}
 		this.updateClass = this.updateClass.bind(this);
+		this.updateDecklist = this.updateDecklist.bind(this);
+		this.resetCurrentCard = this.resetCurrentCard.bind(this);
 	}
+	// Set a new class to display the cards of
 	updateClass(newClass) {
-		console.log(newClass)
 		this.setState({
 			currentClass: newClass
+		})
+	}
+	// Add a new card to the decklist
+	updateDecklist(newCard) {
+		console.log(newCard)
+		this.setState({
+			currentCard: newCard
+		})
+	}
+	resetCurrentCard() {
+		this.setState({
+			currentCard: {}
 		})
 	}
 	render() {
 		return (
 			<div className="appWrapper">
-				<PlayerClassSelect currentClass={this.state.currentClass} updateClass={this.updateClass}/>
-				<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} />
+				<div className="cardsSection">
+					<PlayerClassSelect currentClass={this.state.currentClass} updateClass={this.updateClass} resetCard={this.resetCurrentCard} />
+					<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} updateDecklist={this.updateDecklist} />
+				</div>
+				<div className="deckSection">
+					<Decklist selectedCard={this.state.currentCard} />
+				</div>
 			</div>
 		)
 	}

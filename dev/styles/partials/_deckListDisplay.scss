@@ -1,0 +1,16 @@
+/* ----- DISPLAY FOR DECKLIST -----*/
+
+.userDeckList {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    background-color: rgba(0,0,0,0.85);
+    border-left: 1px solid white;
+    height: 100vh;
+    width: 100%;
+}
+.userDeckItem {
+    padding: 5px 10px;
+    border-bottom: 1px solid white;
+    color: white;
+}
