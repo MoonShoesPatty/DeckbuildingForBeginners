@@ -202,12 +202,18 @@ class Decklist extends React.Component {
 		card.duplicate = '';
 		const deckArray = [...this.state.userDeck, card];
 		this.sortDeckByCost(deckArray);
+		const deckLength = this.state.userDeckLength + 1;
+		this.setState({
+			userDeckLength: deckLength
+		})
 	}
 	// Runs when a user selects a card for the second time - puts second copy in decklist
-	duplicateCard(card, cardIndex) {
+	duplicateCard(card) {
 		card.duplicate = ' (x2)';
-		console.log(card);
-		const deckArray = [...this.state.userDeck];
+		const deckLength = this.state.userDeckLength + 1;
+		this.setState({
+			userDeckLength: deckLength
+		})
 	}
 	// Sort the user's deck by cost and secondarily by card name
 	sortDeckByCost(deckArray) {
@@ -222,28 +228,37 @@ class Decklist extends React.Component {
 	deleteCard(card) {
 		const deckArray = this.state.userDeck;
 		let numOfCards = this.state.userDeckLength;
+		if (card.duplicate === '') {
+			numOfCards--;
+		} else {
+			numOfCards -= 2;
+		}
 		deckArray.forEach((cardInDeck, index) => {
+			console.log(cardInDeck.cardId, card.cardId)
 			if (cardInDeck.cardId === card.cardId) {
-				deckArray.splice(index, 1)
+				deckArray.splice(index, 1);
+				console.log('HOLLA BACK, YO')
 			}
 		})
 		this.setState({
-			userDeck: deckArray
+			userDeck: deckArray,
+			userDeckLength: numOfCards
 		})
 	}
 	componentWillReceiveProps(nextProps) {
 		let cardExists = false;
-		let cardIndex = 0;
-		if (nextProps.selectedCard.name && this.state.userDeck.length < 30) {
+		// If an empty object was not passed, and the user has room for more cards...
+		if (nextProps.selectedCard.name && this.state.userDeckLength < 30) {
 			console.log(nextProps.selectedCard.cardId)
-			this.state.userDeck.forEach((card, index) => {
+			// See whether the selected card already exists in the deck
+			this.state.userDeck.forEach((card) => {
 				if (nextProps.selectedCard.cardId === card.cardId) {
 					cardExists = true;
-					cardIndex = index;
 				}
 			})
+			// Duplicate or add the selected card accordingly
 			if (cardExists) {
-				this.duplicateCard(nextProps.selectedCard, cardIndex);
+				this.duplicateCard(nextProps.selectedCard);
 			} else {
 				this.addCard(nextProps.selectedCard);
 			}
@@ -262,7 +277,7 @@ class Decklist extends React.Component {
 								<p className="userDeckCardName">
 									{card.name}{card.duplicate}
 								</p>
-								<div className="userDeckCardRemove" onClick={() => this.deleteCard(card.cardId)}>
+								<div className="userDeckCardRemove" onClick={() => this.deleteCard(card)}>
 									{'-'}
 								</div>
 							</li>
