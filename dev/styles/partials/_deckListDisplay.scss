@@ -6,9 +6,10 @@
     list-style-type: none;
     background-color: rgba(0,0,0,0.85);
     border-left: 1px solid white;
-    height: 100vh;
+    height: calc(100vh - 50px);
     width: 100%;
     font-size: 0.9rem;
+    overflow-y: scroll;
 }
 .userDeckItem {
     border-bottom: 1px solid white;
@@ -20,9 +21,9 @@
 }
 .userDeckCardCost, .userDeckCardRemove {
     height: 100%;
-    padding: 5px;
+    padding: 5px 0;
     text-align: center;
-    width: 20px;
+    width: 25px;
 }
 .userDeckCardCost {
     background-color: rgba(0, 174, 255, 0.5);
@@ -42,4 +43,48 @@
     padding: 5px 5px;
     margin: 0;
     white-space: nowrap;
+}
+
+/* ----- SCROLL BAR STYLINGS -----*/
+.userDeckList::-webkit-scrollbar, .pokemonDisplay::-webkit-scrollbar {
+    width: 10px;
+}
+.userDeckList::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.05);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+.userDeckList::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background-color: rgba(0, 174, 255, 0.5);
+}
+
+/* ----- CARD COUNT AT BOTTOM OF DECKLIST -----*/
+.cardCountWrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    background-color: black;
+}
+.cardCount {
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+    margin: 0;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%)
+}
+.deckListBottomGrad {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 80%;
+    background-image: linear-gradient(to top, black, transparent);
 }

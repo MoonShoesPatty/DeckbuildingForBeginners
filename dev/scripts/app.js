@@ -78,7 +78,6 @@ class GetDemCards extends React.Component {
 		})
 	}
 	componentWillReceiveProps(nextProps) {
-		console.log(nextProps)
 		this.displayCards(classCards, nextProps.currentClass, nextProps.currentPage);
 	}
 	// take the cards retrieved from the API and sort them by class
@@ -108,9 +107,13 @@ class GetDemCards extends React.Component {
 		// Send the sorted array back to App
 		this.displayCards(classCards);
 	}
+	// Update the state displayCards: [] to contain the cards corresponding to the a: selected class and b: location based on the page
 	displayCards(allCards, classTo = 'Druid', currentPage = 0) {
 		const currentDisplay = [];
 		const lastCardIndex = classCards[this.props.currentClass].length;
+		console.log(window.innerWidth)
+		console.log(window.innerHeight)
+
 		for (let i = currentPage * 8; i < (currentPage * 8) + 8 && i < lastCardIndex; i++) {
 			currentDisplay.push(allCards[classTo][i]);
 		}
@@ -118,17 +121,19 @@ class GetDemCards extends React.Component {
 			displayCards: currentDisplay
 		})
 	}
+	// User Action: select a card to add to decklist
 	handleClick(selectedCard) {
 		this.props.updateDecklist(selectedCard);
 	}
+	// User Action: click on the "previous page" arrow
 	prevPage() {
 		if(this.props.currentPage > 0) {
 			const newPage = this.props.currentPage - 1;
-			console.log(newPage, "prev")
 			this.props.updatePage(newPage);
 			this.props.resetCard();
 		}
 	}
+	// User Action: click on the "next page" arrow
 	nextPage() {
 		const lastPageIndex = Math.ceil(classCards[this.props.currentClass].length / 8) - 1
 		if (this.props.currentPage < lastPageIndex) {
@@ -164,6 +169,7 @@ class PlayerClassSelect extends React.Component {
 		}
 		this.handleClick = this.handleClick.bind(this);
 	}
+	// User action: select a class from the list of hero types
 	handleClick(newClass) {
 		this.props.updateClass(newClass.hero);
 		this.props.resetCard();
@@ -183,7 +189,8 @@ class Decklist extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			userDeck: []
+			userDeck: [],
+			userDeckLength: 0
 		}
 		this.addCard = this.addCard.bind(this);
 		this.sortDeckByCost = this.sortDeckByCost.bind(this);
@@ -192,33 +199,32 @@ class Decklist extends React.Component {
 	// Put card selected by user in decklist
 	addCard(card) {
 		// Thanks Fatin!
-		//const cardCopy = {...card};
-		const deckArray = [...this.state.userDeck, card]
+		card.duplicate = '';
+		const deckArray = [...this.state.userDeck, card];
 		this.sortDeckByCost(deckArray);
 	}
 	// Runs when a user selects a card for the second time - puts second copy in decklist
-	duplicateCard(card) {
-
+	duplicateCard(card, cardIndex) {
+		card.duplicate = ' (x2)';
+		console.log(card);
+		const deckArray = [...this.state.userDeck];
 	}
 	// Sort the user's deck by cost and secondarily by card name
 	sortDeckByCost(deckArray) {
 		deckArray.sort(function (a, b) {
 			return a.cost - b.cost;
 		});
-		console.log(deckArray)
 		this.setState({
 			userDeck: deckArray
 		})
 	}
 	// Remove selected card from decklist
-	deleteCard(cardRemoveId) {
+	deleteCard(card) {
 		const deckArray = this.state.userDeck;
+		let numOfCards = this.state.userDeckLength;
 		deckArray.forEach((cardInDeck, index) => {
-			console.log(cardInDeck.cardId, cardRemoveId)
-			if (cardInDeck.cardId === cardRemoveId) {
-				console.log(index)
+			if (cardInDeck.cardId === card.cardId) {
 				deckArray.splice(index, 1)
-				console.log(deckArray)
 			}
 		})
 		this.setState({
@@ -226,13 +232,26 @@ class Decklist extends React.Component {
 		})
 	}
 	componentWillReceiveProps(nextProps) {
+		let cardExists = false;
+		let cardIndex = 0;
 		if (nextProps.selectedCard.name && this.state.userDeck.length < 30) {
-			this.addCard(nextProps.selectedCard);
+			console.log(nextProps.selectedCard.cardId)
+			this.state.userDeck.forEach((card, index) => {
+				if (nextProps.selectedCard.cardId === card.cardId) {
+					cardExists = true;
+					cardIndex = index;
+				}
+			})
+			if (cardExists) {
+				this.duplicateCard(nextProps.selectedCard, cardIndex);
+			} else {
+				this.addCard(nextProps.selectedCard);
+			}
 		}
 	}
 	render() {
 		return (
-			<div>
+			<div className="deckSection">
 				<ul className="userDeckList">
 					{this.state.userDeck.map((card) => {
 						return (
@@ -241,7 +260,7 @@ class Decklist extends React.Component {
 									{`${card.cost}`}	
 								</div>
 								<p className="userDeckCardName">
-									{`${card.name}`}
+									{card.name}{card.duplicate}
 								</p>
 								<div className="userDeckCardRemove" onClick={() => this.deleteCard(card.cardId)}>
 									{'-'}
@@ -250,6 +269,10 @@ class Decklist extends React.Component {
 						)
 					})}
 				</ul>
+				{/* <div className="deckListBottomGrad"></div> */}
+				<div className="cardCountWrapper">
+					<p className="cardCount">{this.state.userDeckLength} / 30</p>
+				</div>
 			</div>
 		)
 	}
@@ -277,7 +300,6 @@ class App extends React.Component {
 	}
 	// Add a new card to the decklist
 	updateDecklist(newCard) {
-		console.log(newCard)
 		this.setState({
 			currentCard: newCard
 		})
@@ -301,9 +323,7 @@ class App extends React.Component {
 					<PlayerClassSelect currentClass={this.state.currentClass} updateClass={this.updateClass} resetCard={this.resetCurrentCard} />
 					<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} updateDecklist={this.updateDecklist} updatePage={this.updatePage} resetCard={this.resetCurrentCard}/>
 				</div>
-				<div className="deckSection">
-					<Decklist selectedCard={this.state.currentCard} />
-				</div>
+				<Decklist selectedCard={this.state.currentCard} />
 			</div>
 		)
 	}
