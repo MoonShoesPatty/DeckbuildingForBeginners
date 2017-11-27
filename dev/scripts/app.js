@@ -67,7 +67,6 @@ class GetDemCards extends React.Component {
 					locale: 'enUS'
 				},
 				proxyHeaders: {
-
 					'X-Mashape-Key': 'fxIgSodXnmmshLLhawVYFjm6AKy9p1sgwjSjsnhjrIdUCsVwHY'
 				},
 				xmlToJSON: false,
@@ -111,10 +110,18 @@ class GetDemCards extends React.Component {
 	displayCards(allCards, classTo = 'Druid', currentPage = 0) {
 		const currentDisplay = [];
 		const lastCardIndex = classCards[this.props.currentClass].length;
-		console.log(window.innerWidth)
-		console.log(window.innerHeight)
-
-		for (let i = currentPage * 8; i < (currentPage * 8) + 8 && i < lastCardIndex; i++) {
+		// Based on the size of the viewport, deliver different numbers of cards per page
+		const windowWidth = window.innerWidth;
+		let cardsPerPage = 0;
+		if (windowWidth > 940) {
+			cardsPerPage = 8;
+		} else if (windowWidth > 480) {
+			cardsPerPage = 6;
+		} else {
+			cardsPerPage = 4;
+		}
+		// pick out the cards to be displayed based on hero class and page number
+		for (let i = currentPage * cardsPerPage; i < (currentPage * cardsPerPage) + cardsPerPage && i < lastCardIndex; i++) {
 			currentDisplay.push(allCards[classTo][i]);
 		}
 		this.setState({
@@ -198,7 +205,6 @@ class Decklist extends React.Component {
 	}
 	// Put card selected by user in decklist
 	addCard(card) {
-		// Thanks Fatin!
 		card.duplicate = '';
 		const deckArray = [...this.state.userDeck, card];
 		this.sortDeckByCost(deckArray);
@@ -207,13 +213,16 @@ class Decklist extends React.Component {
 			userDeckLength: deckLength
 		})
 	}
-	// Runs when a user selects a card for the second time - puts second copy in decklist
+	// Runs when a user selects a card already in the decklist - puts second copy in decklist
 	duplicateCard(card) {
-		card.duplicate = ' (x2)';
-		const deckLength = this.state.userDeckLength + 1;
-		this.setState({
-			userDeckLength: deckLength
-		})
+		// Only run this if this is the second instance of the card in the deck - 3 copies of a card is illegal!
+		if (card.duplicate === '') {
+			card.duplicate = ' (x2)';
+			const deckLength = this.state.userDeckLength + 1;
+			this.setState({
+				userDeckLength: deckLength
+			})
+		}
 	}
 	// Sort the user's deck by cost and secondarily by card name
 	sortDeckByCost(deckArray) {
@@ -234,10 +243,8 @@ class Decklist extends React.Component {
 			numOfCards -= 2;
 		}
 		deckArray.forEach((cardInDeck, index) => {
-			console.log(cardInDeck.cardId, card.cardId)
 			if (cardInDeck.cardId === card.cardId) {
 				deckArray.splice(index, 1);
-				console.log('HOLLA BACK, YO')
 			}
 		})
 		this.setState({
@@ -249,7 +256,6 @@ class Decklist extends React.Component {
 		let cardExists = false;
 		// If an empty object was not passed, and the user has room for more cards...
 		if (nextProps.selectedCard.name && this.state.userDeckLength < 30) {
-			console.log(nextProps.selectedCard.cardId)
 			// See whether the selected card already exists in the deck
 			this.state.userDeck.forEach((card) => {
 				if (nextProps.selectedCard.cardId === card.cardId) {
@@ -267,26 +273,30 @@ class Decklist extends React.Component {
 	render() {
 		return (
 			<div className="deckSection">
-				<ul className="userDeckList">
-					{this.state.userDeck.map((card) => {
-						return (
-							<li className="userDeckItem" key={card.cardId}>
-								<div className="userDeckCardCost">
-									{`${card.cost}`}	
-								</div>
-								<p className="userDeckCardName">
-									{card.name}{card.duplicate}
-								</p>
-								<div className="userDeckCardRemove" onClick={() => this.deleteCard(card)}>
-									{'-'}
-								</div>
-							</li>
-						)
-					})}
-				</ul>
-				{/* <div className="deckListBottomGrad"></div> */}
-				<div className="cardCountWrapper">
-					<p className="cardCount">{this.state.userDeckLength} / 30</p>
+				<input type="checkbox" id="decklistSlideOut" />
+				<label htmlFor="decklistSlideOut" className="decklistToggleLabel">Decklist</label>
+				<div className="userDecklistWrapper">
+					<ul className="userDeckList">
+						{this.state.userDeck.map((card) => {
+							return (
+								<li className="userDeckItem" key={card.cardId}>
+									<div className="userDeckCardCost">
+										{`${card.cost}`}	
+									</div>
+									<p className="userDeckCardName">
+										{card.name}{card.duplicate}
+									</p>
+									<div className="userDeckCardRemove" onClick={() => this.deleteCard(card)}>
+										{'-'}
+									</div>
+								</li>
+							)
+						})}
+					</ul>
+					{/* <div className="deckListBottomGrad"></div> */}
+					<div className="cardCountWrapper">
+						<p className="cardCount">{this.state.userDeckLength} / 30</p>
+					</div>
 				</div>
 			</div>
 		)

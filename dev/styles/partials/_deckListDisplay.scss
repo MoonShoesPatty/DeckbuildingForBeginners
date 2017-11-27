@@ -1,5 +1,6 @@
 /* ----- DISPLAY FOR DECKLIST -----*/
 
+
 .userDeckList {
     margin: 0;
     padding: 0;
@@ -57,7 +58,7 @@
 .userDeckList::-webkit-scrollbar-thumb {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background-color: rgba(0, 174, 255, 0.5);
+    background-color: rgba(0, 174, 255, 0.4);
 }
 
 /* ----- CARD COUNT AT BOTTOM OF DECKLIST -----*/
@@ -74,7 +75,7 @@
 .cardCount {
     text-align: center;
     color: white;
-    font-size: 1rem;
+    font-size: 1.4rem;
     margin: 0;
     position: relative;
     top: 50%;
@@ -87,4 +88,82 @@
     right: 0;
     top: 80%;
     background-image: linear-gradient(to top, black, transparent);
+}
+
+/* ----- DECKLIST DISPLAY TOGGLE CONTROLS - ONLY APPLIES TO SCREENS LESS THAN 768px -----*/
+.decklistToggleLabel {
+    display: none;
+}
+#decklistSlideOut {
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+    display: none;
+}
+
+
+@media (max-width: 940px) {
+    .deckSection {
+        width: 230px;
+    }
+    .cardsSection {
+        width: calc(100% - 230px);
+    }
+}
+@media (max-width: 768px) {
+    .decklistToggleLabel {
+        display: block;
+        color: white;
+        letter-spacing: 4px;
+        writing-mode: vertical-rl;
+        border-left: 1px solid white;
+        border-right: 1px solid white;
+        text-align: center;
+        text-transform: uppercase;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 32px;
+        font-size: 25px;
+        z-index: 100;
+        background-color: black;
+        transition: all 0.3s ease-out;
+    }
+    .decklistToggleLabel::before {
+        content: 'show ';
+    }
+    #decklistSlideOut {
+        display: block;
+    }
+    #decklistSlideOut ~ .userDecklistWrapper {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        transition: all 0.3s ease-out;
+        width: 250px;
+    }
+    #decklistSlideOut:checked ~ .decklistToggleLabel {
+        right: 250px;
+    }
+    #decklistSlideOut:checked ~ .userDecklistWrapper {
+        right: 250px;
+    }
+    #decklistSlideOut:checked ~ .decklistToggleLabel::before {
+        content: 'hide ';
+    }
+    .userDeckList {
+        background-color: black;
+    }
+    .deckSection {
+        position: absolute;
+        right: -250px;
+    }
+    .cardsSection {
+        width: calc(100vw - 29px);
+    }
+}
+@media (max-width: 480px) {
+    
 }
