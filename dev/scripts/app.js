@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import axios from 'axios';
 import Qs from 'qs';
+import classNames from 'classnames';
 
 // Object indicating which sets belong to which format
 const setsInFormat = {
@@ -178,15 +179,14 @@ class PlayerClassSelect extends React.Component {
 	}
 	// User action: select a class from the list of hero types
 	handleClick(newClass) {
-		this.props.updateClass(newClass.hero);
+		this.props.updateClass(newClass);
 		this.props.resetCard();
 	}
 	render() {
 		return (
 			<ul className="classList">
-				{this.state.classArray.map((hero) => {
-					return <li onClick={() => this.handleClick({hero})} key={hero} className="classListItem">{`${hero}`}</li>
-				})}
+				<li onClick={() => this.handleClick(this.props.selectedClass)} key={this.props.selectedClass} className="classListItem">{this.props.selectedClass}</li>
+				<li onClick={() => this.handleClick("Neutral")} key="Neutral" className="classListItem">Neutral</li>
 			</ul>
 		)
 	}
@@ -303,16 +303,48 @@ class Decklist extends React.Component {
 	}
 }
 
+class HeroSelect extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			classArray: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'],
+			heroSelected: false
+		}
+		this.handleClick = this.handleClick.bind(this);
+	}
+	handleClick(newHero) {
+		this.props.updateHero(newHero.hero);
+		this.setState({
+			heroSelected: true
+		})
+	}
+	render() {
+		return (
+			<div className={classNames({ landingPageWrapper: true, heroSelected: this.state.heroSelected })}>
+				<img src="/public/styles/assets/hearthstoneLogo.png" alt="" className="landingPageLogo" />
+				<h1 className="heroSelectPrompt">Select your hero, champion:</h1>
+				<ul className="heroSelectList">
+					{this.state.classArray.map((hero) => {
+						return <li onClick={() => this.handleClick({hero})} key={hero} className="heroSelectItem">{`${hero}`}</li>
+					})}
+				</ul>
+			</div>
+		)
+	}
+}
+
 class App extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			currentPage: 0,
 			currentClass: 'Druid',
+			initialClass: '',
 			currentCard: {}
 		}
-		this.updateClass = this.updateClass.bind(this);
 		this.updatePage = this.updatePage.bind(this);
+		this.updateHero = this.updateHero.bind(this);
+		this.updateClass = this.updateClass.bind(this);
 		this.updateDecklist = this.updateDecklist.bind(this);
 		this.resetCurrentCard = this.resetCurrentCard.bind(this);
 	}
@@ -341,11 +373,19 @@ class App extends React.Component {
 			currentPage: newPage
 		})
 	}
+	// Change the current hero class based on user selection on landing page
+	updateHero(newClass) {
+		this.setState({
+			currentClass: newClass,
+			initialClass: newClass
+		})
+	}
 	render() {
 		return (
 			<div className="appWrapper">
+				<HeroSelect updateHero={this.updateHero} />
 				<div className="cardsSection">
-					<PlayerClassSelect currentClass={this.state.currentClass} updateClass={this.updateClass} resetCard={this.resetCurrentCard} />
+					<PlayerClassSelect currentClass={this.state.currentClass} selectedClass={this.state.initialClass} updateClass={this.updateClass} resetCard={this.resetCurrentCard} />
 					<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} updateDecklist={this.updateDecklist} updatePage={this.updatePage} resetCard={this.resetCurrentCard}/>
 				</div>
 				<Decklist selectedCard={this.state.currentCard} />

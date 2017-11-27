@@ -18,6 +18,7 @@
     list-style-type: none;
 }
 .prevPageArrow, .nextPageArrow {
+    display: block;
     width: 5%;
     height: 100px;
     background-color: rgba(255,255,255,0.5);
@@ -30,11 +31,13 @@
     max-height: 40vh;
     position: relative;
     top: 0;
-    transition: all 0.2s ease-out;
+    transition: top 0.2s ease-out, background-image 0.2s linear;
+}
+.collectionListItem:active {
+    background-image: radial-gradient(rgba(255,255,255,0.7), transparent 65%);
 }
 .collectionListItem:hover, .collectionListItem:focus {
     cursor: pointer;
-    background-image: radial-gradient(rgba(255,255,255,0.5), transparent 65%);
     top: -5px;
 }
 .collectionCardImg {

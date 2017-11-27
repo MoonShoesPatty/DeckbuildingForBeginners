@@ -124,11 +124,16 @@
         top: 0;
         bottom: 0;
         right: 0;
-        width: 32px;
+        width: 37px;
         font-size: 25px;
         z-index: 100;
         background-color: black;
         transition: all 0.3s ease-out;
+        cursor: pointer;
+    }
+    .decklistToggleLabel:hover {
+        background-color: rgb(200,200,200);
+        color: black;
     }
     .decklistToggleLabel::before {
         content: 'show ';
@@ -161,7 +166,7 @@
         right: -250px;
     }
     .cardsSection {
-        width: calc(100vw - 29px);
+        width: calc(100vw - 35px);
     }
 }
 @media (max-width: 480px) {

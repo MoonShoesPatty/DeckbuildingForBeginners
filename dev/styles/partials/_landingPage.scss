@@ -1,0 +1,69 @@
+/* ----- LANDING PAGE STYLES & ANIMATION -----*/
+
+.landingPageWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: black;
+    z-index: 150;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: radial-gradient(rgba(255,255,255,0.15), transparent)
+}
+.landingPageLogo {
+    width: 60%;
+    display: block;
+}
+.heroSelectPrompt {
+    font-size: 2rem;
+    margin: 0;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 30px rgb(255, 187, 0);
+    text-align: center;
+    width: 90%;
+}
+.heroSelectList {
+    width: 80%;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.heroSelectItem {
+    display: block;
+    width: 20%;
+    text-align: center;
+    padding: 25px 5px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+.heroSelectItem:hover, .heroSelectItem:focus {
+    text-shadow: 0 0 30px #12B4E9;
+    color: rgb(208, 244, 255);
+}
+.heroSelected {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .heroSelectItem {
+        width: 33%;
+    }
+}
+@media (max-width: 480px) {
+    .heroSelectList {
+        width: 90%;
+    }
+    .heroSelectItem {
+        width: 50%;
+    }
+}
