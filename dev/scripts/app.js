@@ -108,7 +108,7 @@ class GetDemCards extends React.Component {
 		this.displayCards(classCards);
 	}
 	// Update the state displayCards: [] to contain the cards corresponding to the a: selected class and b: location based on the page
-	displayCards(allCards, classTo = 'Druid', currentPage = 0) {
+	displayCards(allCards, classTo = this.props.currentClass, currentPage = 0) {
 		const currentDisplay = [];
 		const lastCardIndex = classCards[this.props.currentClass].length;
 		// Based on the size of the viewport, deliver different numbers of cards per page
@@ -189,6 +189,19 @@ class PlayerClassSelect extends React.Component {
 				<li onClick={() => this.handleClick("Neutral")} key="Neutral" className="classListItem">Neutral</li>
 			</ul>
 		)
+	}
+}
+
+class HelpSection extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			classArray: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'Neutral']
+		}
+		this.handleClick = this.handleClick.bind(this);
+	}
+	render() {
+		return 
 	}
 }
 
@@ -387,6 +400,7 @@ class App extends React.Component {
 				<div className="cardsSection">
 					<PlayerClassSelect currentClass={this.state.currentClass} selectedClass={this.state.initialClass} updateClass={this.updateClass} resetCard={this.resetCurrentCard} />
 					<GetDemCards currentPage={this.state.currentPage} currentClass={this.state.currentClass} updateDecklist={this.updateDecklist} updatePage={this.updatePage} resetCard={this.resetCurrentCard}/>
+					
 				</div>
 				<Decklist selectedCard={this.state.currentCard} />
 			</div>
